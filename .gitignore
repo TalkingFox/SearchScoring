@@ -7,3 +7,5 @@ processor.zip
 
 obj/
 bin/
+
+node_modules/

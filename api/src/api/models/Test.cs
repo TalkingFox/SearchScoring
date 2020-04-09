@@ -1,4 +1,5 @@
 using Amazon.DynamoDBv2.DataModel;
+using System.Collections.Generic;
 
 public class Assertion
 {
@@ -13,5 +14,5 @@ public class Test
     public string Id { get; set; }
     public string RequestFormat { get; set; }
     public string CorrectnessFieldQuery { get; set; }
-    public Assertion[] Assertions { get; set; }
+    public List<Assertion> Assertions { get; set; }
 }

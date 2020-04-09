@@ -43,15 +43,27 @@ namespace api
         /// <returns></returns>
         public async Task<APIGatewayProxyResponse> FunctionHandler(APIGatewayProxyRequest request, ILambdaContext context)
         {
+            string requestBody = request.Body;
+            if (request.IsBase64Encoded)
+            {
+                var bytes =  Convert.FromBase64String(request.Body);
+                requestBody = System.Text.Encoding.UTF8.GetString(bytes);
+            }
             switch (request.Path)
             {
                 case "/api/v1/tests":
                     if (request.HttpMethod == "GET")
                     {
                         var tests = await GetAllTests();
-                        return CreateResponse(200);
+                        return CreateResponse(200, tests);
                     }
-                    return CreateResponse(418);
+                    if (request.HttpMethod == "POST")
+                    {
+                        var test = JsonConvert.DeserializeObject<Test>(requestBody);
+                        await SaveTest(test);
+                        return CreateResponse(204);
+                    }
+                    return CreateResponse(415);
                 default:
                     return CreateResponse(415);
             }
@@ -59,19 +71,31 @@ namespace api
 
         private async Task<IEnumerable<Test>> GetAllTests()
         {
-            var context = new DynamoDBContext(m_dynamo);
-            var conditions = new List<ScanCondition>();
-            var config = new DynamoDBOperationConfig();
-            config.OverrideTableName = TestsTableName;
+            using (var context = new DynamoDBContext(m_dynamo))
+            {
+                var conditions = new List<ScanCondition>();
+                var config = new DynamoDBOperationConfig();
+                config.OverrideTableName = TestsTableName;
 
-            var job = context.ScanAsync<Test>(conditions, config);
-            var results = await job.GetRemainingAsync();
-            return results;
+                var job = context.ScanAsync<Test>(conditions, config);
+                var results = await job.GetRemainingAsync();
+                return results;
+            }
+        }
+
+        private async Task SaveTest(Test test)
+        {
+            using (var context = new DynamoDBContext(m_dynamo))
+            {
+                var config = new DynamoDBOperationConfig();
+                config.OverrideTableName = TestsTableName;
+                await context.SaveAsync(test, config);
+            }
         }
 
         private APIGatewayProxyResponse CreateResponse(int statusCode, object body = null)
         {
-            var bodyAsSerial = (body == null) ? null : JsonConvert.SerializeObject(body);
+            var bodyAsSerial = (body == null) ? "" : JsonConvert.SerializeObject(body);
             return new APIGatewayProxyResponse
             {
                 Body = bodyAsSerial,

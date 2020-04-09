@@ -1,0 +1,154 @@
+/*
+    Palette
+    https://colorhunt.co/palette/30252
+    Find color midpoint: https://meyerweb.com/eric/tools/color-blend/
+*/
+
+html {
+    height: 100%;
+}
+
+body {
+    background-color: #1f024c;
+    color: white;
+    font-family: 'Karla', sans-serif;
+    height: 100%;
+    margin: 0px;
+}
+
+.hidden {
+    display: none;
+}
+
+#app {
+    height: 100%;
+}
+
+#login-button {
+    border: 1px solid pink;
+    margin: auto;
+    width: 20%;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#library-banner {
+    height: 5%;
+    display: flex;
+}
+
+.banner_element {
+    flex: 1;
+    cursor: pointer;
+    text-align: center;
+}
+
+.banner_element.selected {
+    background: black;
+    border: solid 1px white;
+    border-radius: 5px;
+}
+
+#library-table {
+    flex-direction: column;
+    display: flex;
+    border: 3px solid #f638dc;
+    border-radius: 5px;
+    height: 85%;
+}
+
+.text-section {
+    width: 90%;
+}
+
+.text-section>.title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 1.0em;
+}
+
+.text-section>.description {
+    font-size: 0.8em;
+    color: lightgray;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.action-section {
+    width: 10%;
+    margin-left: auto;
+    align-content: center;
+    display: flex;
+}
+
+.table_body {
+    overflow-y: overlay !important;
+    overflow-y: scroll;
+    scrollbar-color: #f638dc #1f024c;
+    scrollbar-width: thin;
+}
+
+.body_row {
+    display: flex;
+    cursor: pointer;
+    min-height: 2em;
+    transition: 0.25s;
+    align-items: center;
+}
+
+.body_row:hover {
+    background: #1f024c !important;
+}
+
+.body_row:nth-child(even) {
+    background: #45056e;
+}
+
+.body_row:nth-child(odd) {
+    background: #8f1383;
+}
+
+.body_cell {
+    flex: 1;
+}
+
+.small_body_cell {
+    flex: 0.1
+}
+
+#music-player {
+    display: flex;
+    position: fixed;
+    height: 10%;
+    width: 100%;
+    border: 3px solid #f638dc;
+    border-radius: 5px;
+    background: #45056e;
+}
+
+#music-player>* {
+    margin: auto;
+}
+
+#play-toggle {
+    transition: 0.25s;
+    color: #f638dc;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+}
+
+#play-toggle:hover {
+    color: #C326B0;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+}
+
+.action-section:hover * {
+    font-weight: 900;
+    cursor: pointer;
+}

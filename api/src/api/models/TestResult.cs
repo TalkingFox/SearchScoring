@@ -1,3 +1,5 @@
+using Amazon.DynamoDBv2.DataModel;
+
 public class UnitResult
 {
     public string Request { get; set; }
@@ -7,6 +9,7 @@ public class UnitResult
 
 public class TestResult
 {
+    [DynamoDBHashKey("id")]
     public string Id { get; set; }
     public Test Test { get; set; }
     public float MeanReciprocolRank { get; set; }
