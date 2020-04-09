@@ -17,3 +17,7 @@ variable "test_results_table_name" {
 variable "test_results_table_arn" {
   type = "string"
 }
+
+variable "lambda_package_path" {
+  type = "string"
+}

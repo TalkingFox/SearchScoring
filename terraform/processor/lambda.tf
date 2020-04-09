@@ -71,13 +71,13 @@ resource "aws_iam_policy" "permission" {
 
 
 resource "aws_lambda_function" "lambda" {
-  filename         = "${var.api_lambda_package_path}"
+  filename         = "${var.lambda_package_path}"
   function_name    = "${var.resource_prefix}_processor"
   role             = "${aws_iam_role.lambda_role.arn}"
   handler          = "index.handler"
   publish          = true
   runtime          = "nodejs12.x"
-  source_code_hash = "${filebase64sha256(var.api_lambda_package_path)}"
+  source_code_hash = "${filebase64sha256(var.lambda_package_path)}"
   timeout          = 30
   environment {
     variables = {
@@ -85,14 +85,4 @@ resource "aws_lambda_function" "lambda" {
       test_results_table = "${var.test_results_table_name}"
     }
   }
-}
-
-resource "aws_lambda_permission" "apigw_lambda" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.lambda.function_name}"
-  principal     = "apigateway.amazonaws.com"
-
-  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${module.api_gateway.rest_api_id}/*/*/*"
 }

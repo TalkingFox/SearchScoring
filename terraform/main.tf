@@ -14,6 +14,7 @@ module "processor" {
   test_table_arn          = "${aws_dynamodb_table.ScoringTests.arn}"
   test_results_table_name = "${aws_dynamodb_table.ScoringTestResults.name}"
   test_results_table_arn  = "${aws_dynamodb_table.ScoringTestResults.arn}"
+  lambda_package_path     = "./processor.zip"
 }
 
 
