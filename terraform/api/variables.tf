@@ -13,3 +13,12 @@ variable "scoring_table_arn" {
 variable "api_lambda_package_path" {
   type = "string"
 }
+
+
+variable "state_machine_arn" {
+  type = "string"
+}
+
+variable "state_machine_name" {
+  type = "string"
+}

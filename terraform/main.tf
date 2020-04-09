@@ -7,12 +7,24 @@ module "app" {
   bucket_name = "${local.bucket_name}"
 }
 
+module "processor" {
+  source                  = "./processor"
+  resource_prefix         = "${local.resource_prefix}"
+  test_table_name         = "${aws_dynamodb_table.ScoringTests.name}"
+  test_table_arn          = "${aws_dynamodb_table.ScoringTests.arn}"
+  test_results_table_name = "${aws_dynamodb_table.ScoringTestResults.name}"
+  test_results_table_arn  = "${aws_dynamodb_table.ScoringTestResults.arn}"
+}
+
+
 module "api" {
   source                  = "./api"
   resource_prefix         = "${local.resource_prefix}"
   scoring_table_name      = "${aws_dynamodb_table.ScoringTests.name}"
   scoring_table_arn       = "${aws_dynamodb_table.ScoringTests.arn}"
   api_lambda_package_path = "./api.zip"
+  state_machine_arn       = "${module.processor.state_machine_arn}"
+  state_machine_name      = "${module.processor.state_machine_name}"
 }
 
 

@@ -49,6 +49,19 @@ data "aws_iam_policy_document" "permission" {
       "${var.scoring_table_arn}"
     ]
   }
+
+  statement {
+    sid = "stateMachineAccess"
+    actions = [
+      "states:StartExecution",
+      "states:DescribeExecution"
+    ]
+    effect = "Allow"
+    resources = [
+      "${var.state_machine_arn}",
+      "arn:aws:states:*:*:execution:${var.state_machine_name}:*"
+    ]
+  }
 }
 
 resource "aws_iam_role_policy_attachment" "permission" {
@@ -73,7 +86,8 @@ resource "aws_lambda_function" "lambda" {
   timeout          = 30
   environment {
     variables = {
-      scoring_table = "${var.scoring_table_name}"
+      scoring_table     = "${var.scoring_table_name}"
+      state_machine_arn = "${var.state_machine_arn}"
     }
   }
 }

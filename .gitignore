@@ -2,3 +2,8 @@
 secrets.tf
 
 .terraform
+api.zip
+processor.zip
+
+obj/
+bin/
