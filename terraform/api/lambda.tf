@@ -79,9 +79,9 @@ resource "aws_lambda_function" "lambda" {
   filename         = "${var.api_lambda_package_path}"
   function_name    = "${var.resource_prefix}_api"
   role             = "${aws_iam_role.lambda_role.arn}"
-  handler          = "index.handler"
+  handler          = "api::api.Function::FunctionHandler"
   publish          = true
-  runtime          = "nodejs12.x"
+  runtime          = "dotnetcore2.1"
   source_code_hash = "${filebase64sha256(var.api_lambda_package_path)}"
   timeout          = 30
   environment {
