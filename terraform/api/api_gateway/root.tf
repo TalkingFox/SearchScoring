@@ -10,7 +10,8 @@ locals {
       jsonencode(aws_api_gateway_resource.test),
       jsonencode(aws_api_gateway_method.get_test),
       jsonencode(aws_api_gateway_resource.test_results),
-      jsonencode(aws_api_gateway_method.get_test_results)
+      jsonencode(aws_api_gateway_method.get_test_results),
+      jsonencode(aws_api_gateway_method.execute),
     )
   ))}"
 }
@@ -46,7 +47,8 @@ resource "aws_api_gateway_deployment" "deploy" {
     "aws_api_gateway_integration.execute",
     "aws_api_gateway_integration.get_test",
     "aws_api_gateway_integration.get_tests",
-    "aws_api_gateway_integration.post_tests"
+    "aws_api_gateway_integration.post_tests",
+    "aws_api_gateway_integration.get_test_results",
   ]
 
   rest_api_id = "${aws_api_gateway_rest_api.api.id}"
