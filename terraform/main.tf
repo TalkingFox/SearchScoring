@@ -10,10 +10,10 @@ module "app" {
 module "processor" {
   source                  = "./processor"
   resource_prefix         = "${local.resource_prefix}"
-  test_table_name         = "${aws_dynamodb_table.ScoringTests.name}"
-  test_table_arn          = "${aws_dynamodb_table.ScoringTests.arn}"
-  test_results_table_name = "${aws_dynamodb_table.ScoringTestResults.name}"
-  test_results_table_arn  = "${aws_dynamodb_table.ScoringTestResults.arn}"
+  test_table_name         = "${aws_dynamodb_table.Tests.id}"
+  test_table_arn          = "${aws_dynamodb_table.Tests.arn}"
+  test_results_table_name = "${aws_dynamodb_table.TestResults.id}"
+  test_results_table_arn  = "${aws_dynamodb_table.TestResults.arn}"
   lambda_package_path     = "./processor.zip"
 }
 
@@ -21,8 +21,10 @@ module "processor" {
 module "api" {
   source                  = "./api"
   resource_prefix         = "${local.resource_prefix}"
-  scoring_table_name      = "${aws_dynamodb_table.ScoringTests.name}"
-  scoring_table_arn       = "${aws_dynamodb_table.ScoringTests.arn}"
+  tests_table_name        = "${aws_dynamodb_table.Tests.id}"
+  tests_table_arn         = "${aws_dynamodb_table.Tests.arn}"
+  test_results_table_name = "${aws_dynamodb_table.TestResults.id}"
+  test_results_table_arn = "${aws_dynamodb_table.TestResults.arn}"
   api_lambda_package_path = "./api.zip"
   state_machine_arn       = "${module.processor.state_machine_arn}"
   state_machine_name      = "${module.processor.state_machine_name}"

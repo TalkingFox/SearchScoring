@@ -4,8 +4,8 @@
 # correctness_field_query: '$.hits.hits.._source.code'
 # Assertions: [{"request": 'tacos', "returns": "12345"}]
 
-resource "aws_dynamodb_table" "ScoringTests" {
-  name         = "${local.resource_prefix}_scoring_tests"
+resource "aws_dynamodb_table" "Tests" {
+  name         = "${local.resource_prefix}_tests"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "id"
   attribute {
@@ -19,8 +19,8 @@ resource "aws_dynamodb_table" "ScoringTests" {
 # MRR: 0.5
 # Results: [{"request": 'tacos', "returns": "12345", "rank": 1}]
 
-resource "aws_dynamodb_table" "ScoringTestResults" {
-  name         = "${local.resource_prefix}_scoring_test_results"
+resource "aws_dynamodb_table" "TestResults" {
+  name         = "${local.resource_prefix}_test_results"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "id"
   attribute {

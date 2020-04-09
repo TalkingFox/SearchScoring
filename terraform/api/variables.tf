@@ -2,11 +2,18 @@ variable "resource_prefix" {
   type = "string"
 }
 
-variable "scoring_table_name" {
+variable "tests_table_name" {
+  type = "string"
+}
+variable "test_results_table_name" {
   type = "string"
 }
 
-variable "scoring_table_arn" {
+variable "tests_table_arn" {
+  type = "string"
+}
+
+variable "test_results_table_arn" {
   type = "string"
 }
 

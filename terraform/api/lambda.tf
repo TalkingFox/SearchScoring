@@ -37,8 +37,9 @@ data "aws_iam_policy_document" "permission" {
   }
 
   statement {
-    sid = "tableAccess"
+    sid = "testTableAccess"
     actions = [
+      "dynamodb:DescribeTable",
       "dynamodb:GetItem",
       "dynamodb:Scan",
       "dynamodb:PutItem",
@@ -46,7 +47,20 @@ data "aws_iam_policy_document" "permission" {
     ]
     effect = "Allow"
     resources = [
-      "${var.scoring_table_arn}"
+      "${var.tests_table_arn}"
+    ]
+  }
+
+  statement {
+    sid = "testResultsTableAccess"
+    actions = [
+      "dynamodb:DescribeTable",
+      "dynamodb:GetItem",
+      "dynamodb:Scan"
+    ]
+    effect = "Allow"
+    resources = [
+      "${var.test_results_table_arn}"
     ]
   }
 
@@ -86,8 +100,9 @@ resource "aws_lambda_function" "lambda" {
   timeout          = 30
   environment {
     variables = {
-      scoring_table     = "${var.scoring_table_name}"
-      state_machine_arn = "${var.state_machine_arn}"
+      tests_table_name        = "${var.tests_table_name}"
+      test_results_table_name = "${var.test_results_table_name}"
+      state_machine_arn       = "${var.state_machine_arn}"
     }
   }
 }
