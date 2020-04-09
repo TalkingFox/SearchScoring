@@ -49,6 +49,7 @@ resource "aws_api_gateway_deployment" "deploy" {
     "aws_api_gateway_integration.get_tests",
     "aws_api_gateway_integration.post_tests",
     "aws_api_gateway_integration.get_test_results",
+    "aws_api_gateway_integration.execute",
   ]
 
   rest_api_id = "${aws_api_gateway_rest_api.api.id}"
