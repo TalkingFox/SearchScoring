@@ -11,7 +11,8 @@ locals {
       jsonencode(aws_api_gateway_method.get_test),
       jsonencode(aws_api_gateway_resource.test_results),
       jsonencode(aws_api_gateway_method.get_test_results),
-      jsonencode(aws_api_gateway_method.execute),
+      jsonencode(aws_api_gateway_method.get_execute_id),
+      jsonencode(aws_api_gateway_method.post_execute_id),
     )
   ))}"
 }
@@ -44,12 +45,12 @@ resource "aws_api_gateway_stage" "deploy" {
 
 resource "aws_api_gateway_deployment" "deploy" {
   depends_on = [
-    "aws_api_gateway_integration.execute",
     "aws_api_gateway_integration.get_test",
     "aws_api_gateway_integration.get_tests",
     "aws_api_gateway_integration.post_tests",
     "aws_api_gateway_integration.get_test_results",
-    "aws_api_gateway_integration.execute",
+    "aws_api_gateway_integration.get_execute_id",
+    "aws_api_gateway_integration.post_execute_id",
   ]
 
   rest_api_id = "${aws_api_gateway_rest_api.api.id}"
