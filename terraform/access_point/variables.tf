@@ -15,3 +15,8 @@ variable "api_invoke_stage" {
 variable "record_name" {
   type = "string"
 }
+
+variable "hosted_zone" {
+  type = "string"
+}
+

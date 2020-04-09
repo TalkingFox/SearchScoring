@@ -37,7 +37,7 @@ data "aws_iam_policy_document" "terraform_access" {
   }
 
   statement {
-    sid = "music_origin_identity_access"
+    sid = "scoring_origin_identity_access"
     actions = [
       "s3:GetObject",
       "s3:PutObject",
@@ -47,7 +47,7 @@ data "aws_iam_policy_document" "terraform_access" {
     effect = "Allow"
     principals {
       type        = "AWS"
-      identifiers = ["${aws_cloudfront_origin_access_identity.music_identity.iam_arn}"]
+      identifiers = ["${aws_cloudfront_origin_access_identity.scoring_identity.iam_arn}"]
     }
     resources = [
       "${aws_s3_bucket.bucket.arn}",

@@ -16,7 +16,7 @@ locals {
 }
 
 resource "aws_api_gateway_rest_api" "api" {
-  name        = "music-api"
+  name        = "scoring-api"
   description = "Api Gateway for Wyleconsesone Scoring"
   binary_media_types = [
     "*/*"
