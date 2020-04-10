@@ -22,19 +22,18 @@ namespace api
 
         private readonly IAmazonStepFunctions m_stepFunctions;
         private readonly IAmazonDynamoDB m_dynamo;
-        private readonly IConfiguration m_configuration;
-        private readonly string TestsTableName;
-        private readonly string TestsResultsTableName;
+        private readonly string m_testsTableName;
+        private readonly string mTestResultsTableName;
         private readonly string StateMachineArn;
         public Function()
         {
             var builder = new ConfigurationBuilder();
             builder.AddEnvironmentVariables();
+            var config = builder.Build();
 
-            m_configuration = builder.Build();
-            TestsTableName = m_configuration.GetValue<string>("tests_table_name");
-            TestsResultsTableName = m_configuration.GetValue<string>("test_results_table_name");
-            StateMachineArn = m_configuration.GetValue<string>("state_machine_arn");
+            m_testsTableName = config.GetValue<string>("tests_table_name");
+            mTestResultsTableName = config.GetValue<string>("test_results_table_name");
+            StateMachineArn = config.GetValue<string>("state_machine_arn");
             m_dynamo = new AmazonDynamoDBClient();
             m_stepFunctions = new AmazonStepFunctionsClient();
         }
@@ -64,12 +63,16 @@ namespace api
                     if (request.HttpMethod == "POST")
                     {
                         var test = JsonConvert.DeserializeObject<Test>(requestBody);
+                        if (!test.RequestFormat.Contains("{{query_string}"))
+                        {
+                            return CreateResponse(400, "RequestFormat property must contain {{query_string}} in order for subsitution to occur.");
+                        }
                         await SaveTest(test);
                         return CreateResponse(204);
                     }
                     return CreateResponse(415);
                 case var x when x.StartsWith("/api/v1/execute"):
-                    var id = request.PathParameters["id"];
+                    var id = System.Web.HttpUtility.UrlDecode(request.PathParameters["id"]);
                     if (request.HttpMethod == "GET")
                     {
                         var status = await GetTestStatus(id);
@@ -77,6 +80,10 @@ namespace api
                     }
                     if (request.HttpMethod == "POST")
                     {
+                        if (!await IsTestExisting(id))
+                        {
+                            return CreateResponse(400, $"Test {id} does not exist!");
+                        }
                         var jobId = await StartTest(id);
                         return CreateResponse(200, jobId);
                     }
@@ -92,7 +99,7 @@ namespace api
             {
                 var conditions = new List<ScanCondition>();
                 var config = new DynamoDBOperationConfig();
-                config.OverrideTableName = TestsTableName;
+                config.OverrideTableName = m_testsTableName;
 
                 var job = context.ScanAsync<Test>(conditions, config);
                 var results = await job.GetRemainingAsync();
@@ -105,7 +112,7 @@ namespace api
             using (var context = new DynamoDBContext(m_dynamo))
             {
                 var config = new DynamoDBOperationConfig();
-                config.OverrideTableName = TestsTableName;
+                config.OverrideTableName = m_testsTableName;
                 await context.SaveAsync(test, config);
             }
         }
@@ -114,7 +121,7 @@ namespace api
         {
             var executionName = "TestId-" + Guid.NewGuid().ToString();
             var request = new StartExecutionRequest();
-            request.Input = JsonConvert.SerializeObject(testId);
+            request.Input = JsonConvert.SerializeObject(new { TestId = testId });
             request.Name = executionName;
             request.StateMachineArn = StateMachineArn;
 
@@ -128,6 +135,17 @@ namespace api
             request.ExecutionArn = executionArn;
             var response = await m_stepFunctions.DescribeExecutionAsync(request);
             return response.Status;
+        }
+
+        private async Task<bool> IsTestExisting(string testId)
+        {
+            using (var context = new DynamoDBContext(m_dynamo))
+            {
+                var config = new DynamoDBOperationConfig();
+                config.OverrideTableName = m_testsTableName;
+                var result = await context.LoadAsync<Test>(testId, config);
+                return result != null;
+            }
         }
 
         private APIGatewayProxyResponse CreateResponse(int statusCode, object body = null)

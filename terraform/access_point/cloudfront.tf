@@ -67,8 +67,8 @@ resource "aws_cloudfront_distribution" "streaming" {
     }
 
     min_ttl     = 0
-    default_ttl = 600
-    max_ttl     = 3600
+    default_ttl = 0
+    max_ttl     = 0
   }
 
   viewer_certificate {

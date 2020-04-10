@@ -39,6 +39,7 @@ data "aws_iam_policy_document" "permission" {
   statement {
     sid = "testsTableAccess"
     actions = [
+      "dynamodb:DescribeTable",
       "dynamodb:GetItem"
     ]
     effect = "Allow"
@@ -50,7 +51,9 @@ data "aws_iam_policy_document" "permission" {
   statement {
     sid = "testResultsTableAccess"
     actions = [
-      "dynamodb:PutItem"
+      "dynamodb:DescribeTable",
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem"
     ]
     effect = "Allow"
     resources = [
@@ -74,9 +77,9 @@ resource "aws_lambda_function" "lambda" {
   filename         = "${var.lambda_package_path}"
   function_name    = "${var.resource_prefix}_processor"
   role             = "${aws_iam_role.lambda_role.arn}"
-  handler          = "index.handler"
+  handler          = "processor::processor.Function::FunctionHandler"
   publish          = true
-  runtime          = "nodejs12.x"
+  runtime          = "dotnetcore2.1"
   source_code_hash = "${filebase64sha256(var.lambda_package_path)}"
   timeout          = 30
   environment {

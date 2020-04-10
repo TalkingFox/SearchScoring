@@ -1,6 +1,6 @@
 resource "aws_sfn_state_machine" "processor" {
-  name     = "${var.resource_prefix}_processor"
-  role_arn = "${aws_iam_role.step_function.arn}"
+  name       = "${var.resource_prefix}_processor"
+  role_arn   = "${aws_iam_role.step_function.arn}"
   depends_on = ["aws_iam_role.step_function"]
   definition = <<EOF
 {  
@@ -8,6 +8,10 @@ resource "aws_sfn_state_machine" "processor" {
   "States": {
     "ExecuteTest": {
       "Type": "Task",
+      "Parameters": {
+          "executionId.$": "$$.Execution.Id",
+          "testId.$": "$.TestId"
+      },
       "Resource": "${aws_lambda_function.lambda.arn}",
       "End": true
     }

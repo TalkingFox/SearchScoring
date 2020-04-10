@@ -14,5 +14,7 @@ public class Test
     public string Id { get; set; }
     public string RequestFormat { get; set; }
     public string CorrectnessFieldQuery { get; set; }
+    public string Endpoint { get; set; }
+    public List<SerializableKeyValuePair> Headers { get; set; }
     public List<Assertion> Assertions { get; set; }
 }
